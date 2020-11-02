@@ -91,8 +91,17 @@ public class Interpreter {
         if (printMatcher.matches()) {
             String expressionLine = printMatcher.group(1).strip();
 
-            // TODO: Implement. Consider how to convert expressionLine into a more usable object when constructing the
-            //       PrintStatement.
+            // TODO: Implement.
+            // The line is in the format:
+            //
+            //     print(<expression>)
+            //
+            // where <expression> is an expression as a String stored in expressionLine. For example, if the full line
+            // was "print(10)", expressionLine would be the String "10". Consider how to convert expressionLine into a
+            // more usable object when constructing the PrintStatement.
+            Expression printExpression = Expression.create(expressionLine);
+
+            return new PrintStatement(printExpression);
         }
 
         return null;
@@ -105,21 +114,43 @@ public class Interpreter {
             String variableName = assignMatcher.group(1).strip();
             String expressionLine = assignMatcher.group(2).strip();
 
-            // TODO: Implement. Consider how to convert expressionLine into a more usable object when constructing the
-            //       AssignStatement.
+            // TODO: Implement.
+            // The line is in the format:
+            //
+            //     <variable> = <expression>
+            //
+            // where <variable> is the name of a variable as a String, stored in variableName, and <expression> is an
+            // expression as a String, stored in expressionLine. For example, if the full line was "x = y + 5",
+            // variableName would be the String "x" and expressionLine would be the String "y + 5". Consider how to
+            // convert expressionLine into a more usable object when constructing the AssignStatement.
+            Expression assignExpression = Expression.create(expressionLine);
+            return new AssignStatement(variableName, assignExpression);
         }
 
         return null;
     }
 
-    // Attempts to parse the line as a return statement. Returns null if it's not a match.
-    private Statement parseReturnStatement(String line) {
-        Matcher returnMatcher = RETURN_PATTERN.matcher(line);
-        if (returnMatcher.matches()) {
-            String returnLine = returnMatcher.group(1);
+    // Attempts to parse the line as an if statement. Returns null if it's not a match.
+    private Statement parseIfStatement(String line, Queue<String> lines) {
+        Matcher ifMatcher = IF_PATTERN.matcher(line);
+        if (ifMatcher.matches()) {
+            String conditionLine = ifMatcher.group(1);
+            List<Statement> blockStatements = parseBlockStatements(lines);
 
-            // TODO: Implement. Consider how to convert returnLine into a more usable object when constructing the
-            //       ReturnStatement.
+            // TODO: Implement.
+            // The lines are in the format:
+            //
+            //     if (<condition>) {
+            //         <statement>
+            //         <statement>
+            //         ...
+            //     }
+            //
+            // where <condition> is a comparison as a String, stored in conditionLine (e.g. "x < 10"), and each
+            // <statement> is parsed as an individual Statement object, collected in the blockStatements list. Consider
+            // how to convert conditionLine into a more usable object when constructing the IfStatement.
+            Condition ifCondition = Condition.create(conditionLine);
+            return new IfStatement(ifCondition, blockStatements);
         }
 
         return null;
@@ -132,8 +163,20 @@ public class Interpreter {
             String conditionLine = whileMatcher.group(1);
             List<Statement> loopStatements = parseBlockStatements(lines);
 
-            // TODO: Implement. conditionLine is the String form of a Condition, e.g. "x < 10". Consider how to convert
-            //       it into a more usable object when constructing the WhileStatement.
+            // TODO: Implement.
+            // The lines are in the format:
+            //
+            //     while (<condition>) {
+            //         <statement>
+            //         <statement>
+            //         ...
+            //     }
+            //
+            // where <condition> is a comparison as a String, stored in conditionLine (e.g. "x < 10"), and each
+            // <statement> is parsed as an individual Statement object, collected in the loopStatements list. Consider
+            // how to convert conditionLine into a more usable object when constructing the WhileStatement.
+            Condition whileCondition = Condition.create(conditionLine);
+            return new WhileStatement(whileCondition, loopStatements);
         }
 
         return null;
@@ -148,28 +191,35 @@ public class Interpreter {
             String updateLine = forMatcher.group(3);
             List<Statement> loopStatements = parseBlockStatements(lines);
 
-            // TODO: Implement. Suppose we have the first line of a for loop: "for (x = 0; x < 10; x = x + 1) {".
-            //       - initializationLine is the String form of the initialization part of the loop, "x = 0".
-            //       - conditionLine is the String form of the condition, "x < 10".
-            //       - updateLine is the String form of the update part of a for loop, "x = x + 1".
-            //       Consider how to convert these three into more usable objects when constructing the ForStatement.
-            //       For initializationLine and updateLine, note that we expect those to look like AssignStatements.
+            // TODO: Implement.
+            // The lines are in the format:
+            //
+            //     for (<initialization>; <condition>; <update>) {
+            //         <statement>
+            //         <statement>
+            //         ...
+            //     }
+            //
+            // where <initialization> is an assign statement as a String, stored in initializationLine; <condition> is a
+            // comparison as a String, stored in conditionLine; <update> is an assign statement as a String, stored in
+            // updateLine; and each <statement> is parsed as an individual Statement object, collected in the
+            // loopStatements list. For example, suppose we have the following loop:
+            //
+            //     for (x = 0; x < 10; x = x + 1) {
+            //         print(x);
+            //     }
+            //
+            // - initializationLine is the String "x = 0"
+            // - conditionLine is the String "x < 10"
+            // - updateLine is the String "x = x + 1"
+            // - loopStatements is a List with one Statement, the PrintStatement created from "print(x)"
+            // Consider how to convert the three Strings into more usable objects when constructing the ForStatement.
+            // For initializationLine and updateLine, note that we expect those to look like AssignStatements.
+            Condition forCondition = Condition.create(conditionLine);
+            Statement initializationAssign =  parseAssignStatement(initializationLine);
+            Statement updateAssign =  parseAssignStatement(updateLine);
+            return new ForStatement(forCondition, loopStatements, initializationAssign, updateAssign);
         }
-
-        return null;
-    }
-
-    // Attempts to parse the line as an if statement. Returns null if it's not a match.
-    private Statement parseIfStatement(String line, Queue<String> lines) {
-        Matcher ifMatcher = IF_PATTERN.matcher(line);
-        if (ifMatcher.matches()) {
-            String conditionLine = ifMatcher.group(1);
-            List<Statement> blockStatements = parseBlockStatements(lines);
-
-            // TODO: Implement. conditionLine is the String form of a Condition, e.g. "x < 10". Consider how to convert
-            //       it into a more usable object when constructing the IfStatement.
-        }
-
         return null;
     }
 
@@ -193,12 +243,55 @@ public class Interpreter {
 
             List<Statement> functionStatements = parseBlockStatements(lines);
 
-            // TODO: Implement. The information we parsed from this line has been collected in functionName,
-            //       parameterNames, and functionStatements.
+            // TODO: Implement.
+            // The lines are in the format:
+            //
+            //     define <function>(<parameter>, <parameter>, ...) {
+            //         <statement>
+            //         <statement>
+            //         ...
+            //     }
+            //
+            // where <function> is the name of the function as a String, stored in functionName; each <parameter> is the
+            // name of a parameter as a String, collected in the parameterNames list; and each <statement> is parsed as
+            // an individual Statement object, collected in the functionStatements list. For example, suppose we have
+            // the following function definition:
+            //
+            //     define sum(a, b, c) {
+            //         print(a)
+            //         print(b)
+            //         print(c)
+            //         return a + b + c
+            //     }
+            //
+            // - functionName is the String "sum"
+            // - parameterNames is a list with three Strings, "a", "b", and "c"
+            // - functionStatements is a list with four Statement objects: three PrintStatements and one ReturnStatement
         }
 
         return null;
     }
+
+    // Attempts to parse the line as a return statement. Returns null if it's not a match.
+    private Statement parseReturnStatement(String line) {
+        Matcher returnMatcher = RETURN_PATTERN.matcher(line);
+        if (returnMatcher.matches()) {
+            String returnLine = returnMatcher.group(1);
+
+            // TODO: Implement.
+            // The line is in the format:
+            //
+            //     return <expression>
+            //
+            // where <expression> is an expression as a String stored in returnLine. For example, if the full line was
+            // "return x + y", expressionLine would be the String "x + y". Consider how to convert returnLine into a
+            // more usable object when constructing the ReturnStatement.
+
+        }
+
+        return null;
+    }
+
 
     // parseBlockStatements is called when parsing any statement type with multiple lines. It will keep converting lines
     // into Statements and collecting them in a List until it encounters an end block line "}".

@@ -56,6 +56,7 @@ public abstract class Expression {
         if (expressionString.matches(CONSTANT_PATTERN.pattern())) {
             int value = Integer.parseInt(expressionString);
             // TODO: Implement.
+            return new ConstantExpression(value);
         }
 
         return null;
@@ -66,6 +67,7 @@ public abstract class Expression {
     private static Expression parseVariableExpression(String expressionString) {
         if (expressionString.matches(VARIABLE_NAME_PATTERN.pattern())) {
             // TODO: Implement.
+            return new VariableExpression(expressionString);
         }
 
         return null;
@@ -181,7 +183,7 @@ public abstract class Expression {
         Expression lhs = operands.pop();
 
         // TODO: Implement. Create the ArithmeticExpression from operator, lhs, and rhs and store it as combined below.
-        ArithmeticExpression combined = null;
+        ArithmeticExpression combined = new ArithmeticExpression(operator, lhs, rhs);
 
         operands.push(combined);
     }

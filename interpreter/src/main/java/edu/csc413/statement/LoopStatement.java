@@ -1,6 +1,10 @@
 package edu.csc413.statement;
 
+import edu.csc413.expression.Condition;
+import edu.csc413.expression.Expression;
 import edu.csc413.interpreter.ProgramState;
+
+import java.util.List;
 
 /**
  * An abstract type of BlockStatement which represents a looping statement. Like other BlockStatements, a LoopStatement
@@ -10,10 +14,19 @@ import edu.csc413.interpreter.ProgramState;
 public abstract class LoopStatement extends BlockStatement {
     // TODO: Implement. Add whatever instance variables are needed. Hint: consider what is common to all loop types.
 
+    public LoopStatement(Condition condition, List<Statement> blockStatements){
+        super(condition, blockStatements);
+    }
+
     @Override
     public void run(ProgramState programState) {
         // TODO: Implement. Hint: you can call BlockStatement's runBlock method, as well as the abstract methods
         //       runInitialization and runUpdate.
+        runInitialization(programState);
+        while(condition.evaluate(programState)){
+            runBlock(programState);
+            runUpdate(programState);
+        }
     }
 
     /**

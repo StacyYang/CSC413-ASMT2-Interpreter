@@ -90,8 +90,6 @@ public class Interpreter {
         Matcher printMatcher = PRINT_PATTERN.matcher(line);
         if (printMatcher.matches()) {
             String expressionLine = printMatcher.group(1).strip();
-
-            // TODO: Implement.
             // The line is in the format:
             //
             //     print(<expression>)
@@ -113,8 +111,6 @@ public class Interpreter {
         if (assignMatcher.matches()) {
             String variableName = assignMatcher.group(1).strip();
             String expressionLine = assignMatcher.group(2).strip();
-
-            // TODO: Implement.
             // The line is in the format:
             //
             //     <variable> = <expression>
@@ -137,7 +133,6 @@ public class Interpreter {
             String conditionLine = ifMatcher.group(1);
             List<Statement> blockStatements = parseBlockStatements(lines);
 
-            // TODO: Implement.
             // The lines are in the format:
             //
             //     if (<condition>) {
@@ -163,7 +158,6 @@ public class Interpreter {
             String conditionLine = whileMatcher.group(1);
             List<Statement> loopStatements = parseBlockStatements(lines);
 
-            // TODO: Implement.
             // The lines are in the format:
             //
             //     while (<condition>) {
@@ -191,7 +185,6 @@ public class Interpreter {
             String updateLine = forMatcher.group(3);
             List<Statement> loopStatements = parseBlockStatements(lines);
 
-            // TODO: Implement.
             // The lines are in the format:
             //
             //     for (<initialization>; <condition>; <update>) {
@@ -243,7 +236,6 @@ public class Interpreter {
 
             List<Statement> functionStatements = parseBlockStatements(lines);
 
-            // TODO: Implement.
             // The lines are in the format:
             //
             //     define <function>(<parameter>, <parameter>, ...) {
@@ -267,6 +259,7 @@ public class Interpreter {
             // - functionName is the String "sum"
             // - parameterNames is a list with three Strings, "a", "b", and "c"
             // - functionStatements is a list with four Statement objects: three PrintStatements and one ReturnStatement
+            return new DefineFunctionStatement(functionName, parameterNames, functionStatements);
         }
 
         return null;
@@ -278,7 +271,6 @@ public class Interpreter {
         if (returnMatcher.matches()) {
             String returnLine = returnMatcher.group(1);
 
-            // TODO: Implement.
             // The line is in the format:
             //
             //     return <expression>
@@ -286,7 +278,8 @@ public class Interpreter {
             // where <expression> is an expression as a String stored in returnLine. For example, if the full line was
             // "return x + y", expressionLine would be the String "x + y". Consider how to convert returnLine into a
             // more usable object when constructing the ReturnStatement.
-
+            Expression returnExpression = Expression.create(returnLine);
+            return  new ReturnStatement(returnExpression);
         }
 
         return null;

@@ -55,7 +55,6 @@ public abstract class Expression {
     private static Expression parseConstantExpression(String expressionString) {
         if (expressionString.matches(CONSTANT_PATTERN.pattern())) {
             int value = Integer.parseInt(expressionString);
-            // TODO: Implement.
             return new ConstantExpression(value);
         }
 
@@ -66,7 +65,6 @@ public abstract class Expression {
     // otherwise.
     private static Expression parseVariableExpression(String expressionString) {
         if (expressionString.matches(VARIABLE_NAME_PATTERN.pattern())) {
-            // TODO: Implement.
             return new VariableExpression(expressionString);
         }
 
@@ -90,9 +88,10 @@ public abstract class Expression {
                 parameterValues = parameterList.stream().map(Expression::create).collect(Collectors.toList());
             }
 
-            // TODO: Implement using functionName and parameterValues. functionName is the name of the function being
+            // Implement using functionName and parameterValues. functionName is the name of the function being
             //       called, while parameterValues is a List of Expressions representing the values passed in as the
             //       parameters to the function call.
+            return new FunctionExpression(functionName, parameterValues);
         }
 
         return null;
@@ -182,7 +181,7 @@ public abstract class Expression {
         Expression rhs = operands.pop();
         Expression lhs = operands.pop();
 
-        // TODO: Implement. Create the ArithmeticExpression from operator, lhs, and rhs and store it as combined below.
+        // Implement. Create the ArithmeticExpression from operator, lhs, and rhs and store it as combined below.
         ArithmeticExpression combined = new ArithmeticExpression(operator, lhs, rhs);
 
         operands.push(combined);

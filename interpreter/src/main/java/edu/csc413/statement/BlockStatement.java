@@ -10,7 +10,7 @@ import java.util.List;
  * other Statements to be run in order.
  */
 public abstract class BlockStatement extends Statement {
-    // TODO: Implement. BlockStatement should privately track the List of statements comprising the body of the block.
+    // Implement. BlockStatement should privately track the List of statements comprising the body of the block.
     //                  Add whatever instance variables and constructor are needed to support that.
 
     private final List<Statement> blockStatements;
@@ -26,7 +26,6 @@ public abstract class BlockStatement extends Statement {
      * invoked repeatedly.
      */
     protected void runBlock(ProgramState programState) {
-        // TODO: Implement.
         for(Statement statement: blockStatements){
             statement.run(programState);
         }

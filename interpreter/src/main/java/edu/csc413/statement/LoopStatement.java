@@ -1,7 +1,6 @@
 package edu.csc413.statement;
 
 import edu.csc413.expression.Condition;
-import edu.csc413.expression.Expression;
 import edu.csc413.interpreter.ProgramState;
 
 import java.util.List;
@@ -12,7 +11,7 @@ import java.util.List;
  * block as long as a condition holds true.
  */
 public abstract class LoopStatement extends BlockStatement {
-    // TODO: Implement. Add whatever instance variables are needed. Hint: consider what is common to all loop types.
+    // Add whatever instance variables are needed. Hint: consider what is common to all loop types.
 
     public LoopStatement(Condition condition, List<Statement> blockStatements){
         super(condition, blockStatements);
@@ -20,7 +19,7 @@ public abstract class LoopStatement extends BlockStatement {
 
     @Override
     public void run(ProgramState programState) {
-        // TODO: Implement. Hint: you can call BlockStatement's runBlock method, as well as the abstract methods
+        // Hint: you can call BlockStatement's runBlock method, as well as the abstract methods
         //       runInitialization and runUpdate.
         runInitialization(programState);
         while(condition.evaluate(programState)){

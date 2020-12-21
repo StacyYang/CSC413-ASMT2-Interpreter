@@ -6,4 +6,4 @@
 
 ## Student Email: xyang8@mail.sfsu.edu
 
-### Note: your assignment will not be graded until this README.md is completely filled out.
+### Designs an interpreter pattern that defines the grammar of a particular language in an object-oriented way which can be evaluated by the interpreter itself.
